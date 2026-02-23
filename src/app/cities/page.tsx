@@ -10,8 +10,8 @@ const CITY_IMAGES: Record<string, string> = {
   spain: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=85",
   uae: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=85",
   maldives: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=85",
-  uk: "https://images.unsplash.com/photo-1486299261210-e1a767719d0d?w=800&q=85",
-  saudi: "https://images.unsplash.com/photo-1586724237569-f3d0c2de3148?w=800&q=85",
+  uk: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=800&q=85",
+  saudi: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&q=85",
   qatar: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&q=85",
 };
 
