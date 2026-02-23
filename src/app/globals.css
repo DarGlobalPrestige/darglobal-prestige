@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #faf8f5;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --muted: #6b6b6b;
+  --accent: #c9a227;
+  --accent-light: #f5e6c8;
+  --accent-shadow: rgba(201, 162, 39, 0.35);
+  --charcoal: #1a1a1a;
+  --cream: #faf8f5;
+  --blur-bg: rgba(255, 255, 255, 0.75);
+  --blur-dark: rgba(26, 26, 26, 0.5);
+  --shadow-colored: 0 25px 50px -12px var(--accent-shadow);
+  --shadow-gold: 0 25px 50px -12px var(--accent-shadow);
+  --shadow-soft: 0 4px 24px -4px rgba(0, 0, 0, 0.06);
+  --shadow-blur: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --success: #059669;
+  --success-light: #d1fae5;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+@layer utilities {
+  .glass {
+    background: var(--blur-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .glass-dark {
+    background: var(--blur-dark);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .shadow-colored {
+    box-shadow: var(--shadow-colored);
+  }
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-blur {
+    box-shadow: var(--shadow-blur);
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Animated blobs - decorative background elements */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  pointer-events: none;
+}
+.blob-gold {
+  background: linear-gradient(135deg, #c9a227 0%, #e8d48b 100%);
+}
+.blob-cream {
+  background: linear-gradient(135deg, #f5e6c8 0%, #e8dcc8 100%);
+}
+.blob-charcoal {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+}
+.blob-animate-1 {
+  animation: blob-float 22s ease-in-out infinite;
+}
+.blob-animate-2 {
+  animation: blob-float 18s ease-in-out infinite reverse;
+  animation-delay: -5s;
+}
+.blob-animate-3 {
+  animation: blob-pulse 10s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -40px) scale(1.15); }
+  50% { transform: translate(-25px, 30px) scale(0.9); }
+  75% { transform: translate(40px, 15px) scale(1.08); }
+}
+
+@keyframes blob-pulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.45; }
+}
+
+/* Slider styling */
+.prestige-slider::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  border: 3px solid white;
+  background: var(--accent);
+  cursor: grab;
+  box-shadow: 0 4px 14px var(--accent-shadow);
+}
+.prestige-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+.prestige-slider::-moz-range-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #e8e4de;
+}
+
+.prestige-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  border: 3px solid white;
+  background: var(--accent);
+  cursor: grab;
+  box-shadow: 0 4px 14px var(--accent-shadow);
+}
+.prestige-slider::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #e8e4de;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-modal-in {
+  animation: modalIn 0.4s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in {
+  animation: slideIn 0.35s ease-out forwards;
+}
+
+/* Drag scroll - for horizontal scroll areas */
+.drag-scroll {
+  cursor: grab;
+  user-select: none;
+}
+.drag-scroll:active {
+  cursor: grabbing;
+}
