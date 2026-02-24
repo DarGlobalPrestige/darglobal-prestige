@@ -33,6 +33,7 @@ export default function CityPage({ params }: { params: { slug: string } }) {
             className="object-cover object-center"
             priority
             sizes="100vw"
+            unoptimized={city.id === "uk" || city.id === "saudi"}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)] via-[var(--charcoal)]/50 to-transparent" />
         </div>

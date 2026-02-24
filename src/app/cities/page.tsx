@@ -10,10 +10,13 @@ const CITY_IMAGES: Record<string, string> = {
   spain: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=85",
   uae: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=85",
   maldives: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=85",
-  uk: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=800&q=85",
+  uk: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=85",
   saudi: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&q=85",
   qatar: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&q=85",
 };
+
+// UK and Saudi use unoptimized to avoid fetch failures in some regions
+const UNOPTIMIZED_CITIES = ["uk", "saudi"];
 
 export default function CitiesPage() {
   return (
@@ -47,6 +50,7 @@ export default function CitiesPage() {
                       alt={city.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      unoptimized={UNOPTIMIZED_CITIES.includes(city.id)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/80 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">

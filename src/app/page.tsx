@@ -69,10 +69,11 @@ export default function HomePage() {
                 >
                   <div className="relative h-64 w-72 overflow-hidden rounded-2xl border border-white/80 bg-white shadow-soft transition-all duration-300 group-hover:shadow-colored group-hover:scale-[1.02]">
                     <Image
-                      src={city.id === "oman" ? "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80" : city.id === "spain" ? "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" : city.id === "uae" ? "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80" : city.id === "maldives" ? "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80" : city.id === "uk" ? "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=600&q=80" : city.id === "saudi" ? "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=600&q=80" : city.id === "qatar" ? "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&q=80" : "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80"}
+                      src={city.id === "oman" ? "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80" : city.id === "spain" ? "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" : city.id === "uae" ? "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80" : city.id === "maldives" ? "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80" : city.id === "uk" ? "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80" : city.id === "saudi" ? "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=600&q=80" : city.id === "qatar" ? "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&q=80" : "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80"}
                       alt={city.name}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      unoptimized={city.id === "uk" || city.id === "saudi"}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/90 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-5">

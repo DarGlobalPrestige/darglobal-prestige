@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { BlobBackground } from "@/components/BlobBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { CITIES, PROPERTIES } from "@/lib/data";
+import { InvestmentPreferencesStep, canProceedStep3, type InvestmentPrefs } from "@/components/InvestmentPreferencesStep";
 
 type Path = "" | "full" | "fractional";
 
@@ -58,8 +59,14 @@ function ApplyForm() {
     path: (pathParam === "fractional" ? "fractional" : pathParam === "full" ? "full" : "") as Path,
     properties: [] as string[],
     cities: [] as string[],
-    budgetRange: "",
+    budgetRange: "€250K – €1.5M",
     shareRange: 15,
+    investmentGoals: [] as string[],
+    timeline: "",
+    propertyTypes: [] as string[],
+    riskTolerance: "",
+    budgetMin: 250,
+    budgetMax: 1500,
     fullName: "",
     email: "",
     phone: "",
@@ -77,7 +84,13 @@ function ApplyForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [showConfetti, setShowConfetti] = useState(false);
+
   const handleNext = () => {
+    if (step === 3) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 800);
+    }
     if (step < totalSteps) setStep(step + 1);
   };
   const handleBack = () => {
@@ -139,10 +152,38 @@ function ApplyForm() {
     }));
   };
 
+  const prefs: InvestmentPrefs = {
+    investmentGoals: form.investmentGoals,
+    timeline: form.timeline,
+    propertyTypes: form.propertyTypes,
+    riskTolerance: form.riskTolerance,
+    budgetMin: form.budgetMin,
+    budgetMax: form.budgetMax,
+    budgetRange: form.budgetRange,
+    shareRange: form.shareRange,
+  };
+
+  const updatePrefs = useCallback(
+    (p: InvestmentPrefs) => {
+      setForm((f) => ({
+        ...f,
+        investmentGoals: p.investmentGoals,
+        timeline: p.timeline,
+        propertyTypes: p.propertyTypes,
+        riskTolerance: p.riskTolerance,
+        budgetMin: p.budgetMin,
+        budgetMax: p.budgetMax,
+        budgetRange: p.budgetRange,
+        shareRange: p.shareRange,
+      }));
+    },
+    []
+  );
+
   const canProceed =
     (step === 1 && form.path) ||
     (step === 2) ||
-    (step === 3) ||
+    (step === 3 && form.path && canProceedStep3(form.path, prefs)) ||
     (step === 4 && form.fullName && form.email && form.password === form.confirmPassword && form.password.length >= 8);
 
   if (showConfirm) {
@@ -256,36 +297,27 @@ function ApplyForm() {
             </div>
           )}
 
-          {step === 3 && (
-            <div className="animate-slide-in space-y-6">
-              <p className="text-sm font-medium text-[var(--muted)]">Investment preferences</p>
-              <div>
-                <label className="block text-sm font-medium text-[var(--charcoal)]">Budget range</label>
-                <input
-                  type="text"
-                  placeholder="e.g. €200,000 - €500,000"
-                  value={form.budgetRange}
-                  onChange={(e) => setForm({ ...form, budgetRange: e.target.value })}
-                  className="mt-2 block w-full rounded-xl border border-[var(--accent)]/20 px-4 py-3 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-                />
-              </div>
-              {form.path === "fractional" && (
-                <div>
-                  <label className="block text-sm font-medium text-[var(--charcoal)]">Target share %</label>
-                  <div className="mt-2 flex items-center gap-4">
-                    <input
-                      type="range"
-                      min={1}
-                      max={50}
-                      value={form.shareRange}
-                      onChange={(e) => setForm({ ...form, shareRange: Number(e.target.value) })}
-                      className="prestige-slider flex-1"
-                    />
-                    <span className="font-bold text-[var(--accent)]">{form.shareRange}%</span>
-                  </div>
-                </div>
-              )}
-            </div>
+          {step === 3 && !form.path && (
+            <p className="text-[var(--muted)]">Please go back and select your investment path first.</p>
+          )}
+          {step === 3 && form.path && (
+            <InvestmentPreferencesStep
+              path={form.path}
+              prefs={prefs}
+              onChange={(p) => {
+                setForm((f) => ({
+                  ...f,
+                  investmentGoals: p.investmentGoals,
+                  timeline: p.timeline,
+                  propertyTypes: p.propertyTypes,
+                  riskTolerance: p.riskTolerance,
+                  budgetMin: p.budgetMin,
+                  budgetMax: p.budgetMax,
+                  budgetRange: p.budgetRange,
+                  shareRange: p.shareRange,
+                }));
+              }}
+            />
           )}
 
           {step === 4 && (
