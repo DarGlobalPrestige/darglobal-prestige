@@ -27,6 +27,12 @@ export async function POST(request: NextRequest) {
       cities,
       budgetRange,
       shareRange,
+      investmentGoals,
+      timeline,
+      propertyTypes,
+      riskTolerance,
+      budgetMin,
+      budgetMax,
     } = body;
 
     if (!fullName || !email || !password || password.length < 8) {

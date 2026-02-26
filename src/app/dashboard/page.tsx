@@ -1,30 +1,59 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { ApplicationProcessSection } from "@/components/ApplicationProcessSection";
+import { InvestmentAgreementSection } from "@/components/InvestmentAgreementSection";
+import { ApplicationProgressTracker } from "@/components/ApplicationProgressTracker";
+import { InvestorBenefitsCard } from "@/components/InvestorBenefitsCard";
+
+const DOCS_SUBMITTED_KEY = "darglobal_docs_submitted";
+
+function hasDocsSubmitted(email: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(`${DOCS_SUBMITTED_KEY}_${email}`) === "true";
+  } catch {}
+  return false;
+}
 
 const DASH_CARDS = [
   { key: "overview", title: "Overview", desc: "Application status, investments", href: "#", icon: "📊" },
-  { key: "kyc", title: "KYC", desc: "Identity verification", href: "#", icon: "✅" },
-  { key: "documents", title: "Documents", desc: "Upload passport, proof of address, tax ID", href: "#", icon: "📁" },
   { key: "investments", title: "My Investments", desc: "Properties and returns", href: "#", icon: "🏠" },
   { key: "income", title: "Income Reports", desc: "Quarterly distribution reports", href: "#", icon: "📈" },
-];
-
-const UPLOAD_TYPES = [
-  { id: "passport", label: "Passport / ID", status: "pending" },
-  { id: "address", label: "Proof of address", status: "pending" },
-  { id: "tax", label: "Tax ID / Certificate", status: "pending" },
 ];
 
 export default function DashboardPage() {
   const { user, isLoggedIn } = useAuth();
   const [mounted, setMounted] = useState(false);
+  const [docsSubmitted, setDocsSubmitted] = useState(false);
+  const processRef = useRef<HTMLDivElement>(null);
+  const agreementRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSection = useCallback((id: string) => {
+    if (id === "documentation" || id === "application") {
+      processRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if ((id === "agreement" || id === "review") && docsSubmitted) {
+      agreementRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      processRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [docsSubmitted]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (user?.email) setDocsSubmitted(hasDocsSubmitted(user.email));
+  }, [user?.email]);
+
+  useEffect(() => {
+    if (!mounted || !user?.email) return;
+    const id = setInterval(() => setDocsSubmitted(hasDocsSubmitted(user.email)), 500);
+    return () => clearInterval(id);
+  }, [mounted, user?.email]);
 
   if (!mounted) {
     return <div className="mx-auto max-w-4xl px-4 py-20 text-center text-[var(--muted)]">Loading...</div>;
@@ -61,43 +90,33 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Application status */}
-      <div className="mt-8 rounded-2xl border border-[var(--accent)]/20 bg-[var(--accent-light)]/20 p-6">
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)]/20">
-            <svg className="h-5 w-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </span>
-          <div>
-            <h2 className="font-semibold text-[var(--charcoal)]">Application pending review</h2>
-            <p className="text-sm text-[var(--muted)]">We&apos;ll notify you once approved. Complete KYC & documents below.</p>
-          </div>
-        </div>
+      {/* Main animated progress tracker */}
+      <div className="mt-8">
+        <ApplicationProgressTracker
+          userEmail={user.email}
+          onMilestoneClick={scrollToSection}
+        />
       </div>
 
-      {/* KYC & Documents */}
-      <div className="mt-10">
-        <h2 className="text-xl font-bold text-[var(--charcoal)]">KYC & Documents</h2>
-        <p className="mt-1 text-sm text-[var(--muted)]">Required for compliance. Upload in your backoffice.</p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {UPLOAD_TYPES.map((doc) => (
-            <div
-              key={doc.id}
-              className="rounded-xl border border-[var(--accent)]/10 bg-white p-4 shadow-soft transition-all hover:shadow-soft"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-[var(--charcoal)]">{doc.label}</span>
-                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${doc.status === "pending" ? "bg-amber-100 text-amber-800" : "bg-green-100 text-green-800"}`}>
-                  {doc.status}
-                </span>
-              </div>
-              <button type="button" className="mt-3 w-full rounded-lg border border-[var(--accent)]/30 py-2 text-sm font-medium text-[var(--accent)] hover:bg-[var(--accent-light)]/30">
-                Upload
-              </button>
-            </div>
-          ))}
+      {/* Application process - full flow */}
+      <div ref={processRef} className="mt-8 scroll-mt-24">
+        <ApplicationProcessSection
+          userEmail={user.email}
+          userName={user.fullName}
+          onDocsComplete={() => setDocsSubmitted(true)}
+        />
+      </div>
+
+      {/* Investment agreement - shows after documentation is submitted */}
+      {docsSubmitted && (
+        <div ref={agreementRef} className="mt-8 scroll-mt-24">
+          <InvestmentAgreementSection userEmail={user.email} userName={user.fullName} />
         </div>
+      )}
+
+      {/* Investor benefits */}
+      <div className="mt-8">
+        <InvestorBenefitsCard />
       </div>
 
       {/* Cards */}
