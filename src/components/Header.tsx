@@ -10,7 +10,6 @@ const NAV = [
   { href: "/mission", label: "Mission" },
   { href: "/investment", label: "Opportunities" },
   { href: "/cities", label: "Cities" },
-  { href: "/apply", label: "Apply" },
 ];
 
 export function Header() {
@@ -103,12 +102,30 @@ export function Header() {
                 {label}
               </Link>
             ))}
-            <Link href="/dashboard" className="rounded-lg px-4 py-2" onClick={() => setMobileOpen(false)}>
-              Dashboard
-            </Link>
-            <Link href="/apply" className="rounded-lg px-4 py-2 font-medium text-[var(--accent)]" onClick={() => setMobileOpen(false)}>
-              Apply
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/dashboard" className="rounded-lg px-4 py-2" onClick={() => setMobileOpen(false)}>
+                  Dashboard
+                </Link>
+                {user?.isAdmin && (
+                  <Link href="/admin" className="rounded-lg px-4 py-2 text-[var(--accent)]" onClick={() => setMobileOpen(false)}>
+                    Admin
+                  </Link>
+                )}
+                <button type="button" onClick={() => { logout(); setMobileOpen(false); }} className="rounded-lg px-4 py-2 text-left text-[var(--muted)]">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="rounded-lg px-4 py-2" onClick={() => setMobileOpen(false)}>
+                  Login
+                </Link>
+                <Link href="/apply" className="rounded-lg px-4 py-2 font-medium text-[var(--accent)]" onClick={() => setMobileOpen(false)}>
+                  Apply
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}

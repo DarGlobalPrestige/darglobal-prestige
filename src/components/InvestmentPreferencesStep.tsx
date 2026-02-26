@@ -88,21 +88,6 @@ export function InvestmentPreferencesStep({ path, prefs, onChange }: Props) {
 
   return (
     <div className="animate-slide-in space-y-8">
-      {/* Confetti */}
-      {showConfetti &&
-        Array.from({ length: 24 }).map((_, i) => (
-          <div
-            key={i}
-            className="confetti-piece"
-            style={{
-              left: `${10 + Math.random() * 80}%`,
-              background: ["#c9a227", "#1a1a1a", "#059669", "#e8d48b"][i % 4],
-              borderRadius: i % 3 === 0 ? "50%" : "2px",
-              animationDelay: `${i * 0.05}s`,
-            }}
-          />
-        ))}
-
       <div className="rounded-xl border border-[var(--accent)]/20 bg-[var(--accent-light)]/10 p-4">
         <p className="text-sm font-medium text-[var(--charcoal)]">
           {path === "full" ? "🏠 Full ownership" : "📊 Fractional"} — Tell us your goals so we can match you with the right opportunities.

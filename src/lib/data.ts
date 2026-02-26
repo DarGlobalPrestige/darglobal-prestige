@@ -189,6 +189,15 @@ export function getPropertiesByCity(cityId: CityId) {
   return PROPERTIES.filter((p) => p.cityId === cityId);
 }
 
+export function getCityStats(cityId: CityId) {
+  const props = getPropertiesByCity(cityId);
+  const propertyCount = props.length;
+  const portfolioValue = props.reduce((sum, p) => sum + p.price, 0);
+  const yields = props.filter((p) => p.estimatedYield != null).map((p) => p.estimatedYield!);
+  const avgYield = yields.length > 0 ? yields.reduce((a, b) => a + b, 0) / yields.length : 0;
+  return { propertyCount, portfolioValue, avgYield };
+}
+
 export function getPropertyBySlug(slug: string) {
   return PROPERTIES.find((p) => p.slug === slug);
 }

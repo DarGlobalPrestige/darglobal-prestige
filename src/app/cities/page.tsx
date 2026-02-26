@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BlobBackground } from "@/components/BlobBackground";
-import { CITIES } from "@/lib/data";
+import { CountUp } from "@/components/CountUp";
+import { CITIES, getCityStats } from "@/lib/data";
 
 const CITY_IMAGES: Record<string, string> = {
   oman: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=85",
@@ -41,30 +42,74 @@ export default function CitiesPage() {
         <BlobBackground className="opacity-15" />
         <div className="relative mx-auto max-w-6xl">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {CITIES.map((city) => (
-              <Link key={city.id} href={`/cities/${city.slug}`} className="group">
-                <div className="relative overflow-hidden rounded-2xl border border-[var(--accent)]/10 bg-white shadow-soft transition-all duration-300 group-hover:shadow-colored">
-                  <div className="relative aspect-[4/3]">
-                    <Image
-                      src={CITY_IMAGES[city.id] || CITY_IMAGES.oman}
-                      alt={city.name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      unoptimized={UNOPTIMIZED_CITIES.includes(city.id)}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <span className="text-3xl">{city.flag}</span>
-                      <h3 className="mt-2 text-xl font-bold text-white">{city.name}</h3>
-                      <p className="mt-2 text-sm text-white/90">{city.description}</p>
+            {CITIES.map((city) => {
+              const stats = getCityStats(city.id);
+              const portfolioM = stats.portfolioValue / 1_000_000;
+              return (
+                <Link key={city.id} href={`/cities/${city.slug}`} className="group block">
+                  <div className="relative overflow-hidden rounded-2xl border border-[var(--accent)]/10 bg-white shadow-soft transition-all duration-300 group-hover:shadow-colored">
+                    {/* Image block */}
+                    <div className="relative aspect-[4/3]">
+                      <Image
+                        src={CITY_IMAGES[city.id] || CITY_IMAGES.oman}
+                        alt={city.name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        unoptimized={UNOPTIMIZED_CITIES.includes(city.id)}
+                      />
+                      {/* Diagonal gradient - soft feather for seamless text readability */}
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: "linear-gradient(135deg, transparent 0%, rgba(26,26,26,0.15) 25%, rgba(26,26,26,0.5) 55%, rgba(26,26,26,0.85) 85%, rgba(26,26,26,0.95) 100%)",
+                        }}
+                      />
+                      {/* Flag - top center */}
+                      <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                        <span className="inline-flex items-center justify-center rounded-full bg-white/95 px-4 py-1.5 text-2xl shadow-lg backdrop-blur-sm">
+                          {city.flag}
+                        </span>
+                      </div>
+                      {/* On-image text - city name only, over the gradient */}
+                      <div className="absolute bottom-0 left-0 right-0 p-6">
+                        <h3 className="text-xl font-bold text-white drop-shadow-sm">{city.name}</h3>
+                      </div>
+                    </div>
+                    {/* Attached container below */}
+                    <div className="rounded-b-2xl border-t border-[var(--accent)]/5 bg-white px-5 py-4">
+                      <p className="text-sm text-[var(--muted)] leading-relaxed">{city.description}</p>
+                      <div className="mt-4 flex flex-wrap gap-4 text-sm">
+                        <span className="text-[var(--charcoal)]">
+                          <span className="font-semibold text-[var(--accent)]">
+                            <CountUp end={stats.propertyCount} duration={1200} />
+                          </span>{" "}
+                          properties
+                        </span>
+                        {stats.portfolioValue > 0 && (
+                          <span className="text-[var(--charcoal)]">
+                            <span className="font-semibold text-[var(--accent)]">
+                              <CountUp end={portfolioM} duration={1500} decimals={1} prefix="$" suffix="M" />
+                            </span>{" "}
+                            portfolio
+                          </span>
+                        )}
+                        {stats.avgYield > 0 && (
+                          <span className="text-[var(--charcoal)]">
+                            <span className="font-semibold text-[var(--accent)]">
+                              <CountUp end={stats.avgYield} duration={1400} decimals={1} suffix="%" />
+                            </span>{" "}
+                            avg yield
+                          </span>
+                        )}
+                      </div>
                       <span className="mt-3 inline-block text-sm font-medium text-[var(--accent)] group-hover:underline">
                         View properties →
                       </span>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

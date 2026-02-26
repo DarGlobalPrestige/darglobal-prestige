@@ -1,11 +1,15 @@
+import { AdminGuard } from "@/components/AdminGuard";
+
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[var(--charcoal)] text-white">
-      {children}
-    </div>
+    <AdminGuard>
+      <div className="min-h-screen bg-[var(--charcoal)] text-white">
+        {children}
+      </div>
+    </AdminGuard>
   );
 }

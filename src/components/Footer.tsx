@@ -25,10 +25,11 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-white">Support</h4>
+            <h4 className="font-semibold text-white">Account</h4>
             <ul className="mt-3 space-y-2 text-sm">
+              <li><Link href="/login" className="hover:text-[var(--accent)] transition-colors">Login</Link></li>
               <li><Link href="/dashboard" className="hover:text-[var(--accent)] transition-colors">Investor Dashboard</Link></li>
-              <li><Link href="/apply" className="hover:text-[var(--accent)] transition-colors">Start Application</Link></li>
+              <li><Link href="/admin" className="hover:text-[var(--accent)] transition-colors">Team Admin</Link></li>
             </ul>
           </div>
         </div>

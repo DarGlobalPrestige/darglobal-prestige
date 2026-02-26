@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { BlobBackground } from "@/components/BlobBackground";
 import { useAuth } from "@/contexts/AuthContext";
-import { CITIES, PROPERTIES } from "@/lib/data";
+import { CITIES, PROPERTIES, getCityStats } from "@/lib/data";
+import { CountUp } from "@/components/CountUp";
 import { InvestmentPreferencesStep, canProceedStep3, type InvestmentPrefs } from "@/components/InvestmentPreferencesStep";
 
 type Path = "" | "full" | "fractional";
@@ -256,21 +257,50 @@ function ApplyForm() {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium text-[var(--charcoal)]">Cities</h4>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {CITIES.map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => toggleCity(c.id)}
-                        className={`rounded-xl border-2 px-4 py-2 text-sm font-medium transition-all ${
-                          form.cities.includes(c.id)
-                            ? "border-[var(--accent)] bg-[var(--accent-light)]/30"
-                            : "border-[var(--accent)]/10 hover:border-[var(--accent)]/30"
-                        }`}
-                      >
-                        {c.flag} {c.name}
-                      </button>
-                    ))}
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {CITIES.map((c) => {
+                      const stats = getCityStats(c.id);
+                      const portfolioM = stats.portfolioValue / 1_000_000;
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => toggleCity(c.id)}
+                          className={`rounded-xl border-2 p-4 text-left transition-all ${
+                            form.cities.includes(c.id)
+                              ? "border-[var(--accent)] bg-[var(--accent-light)]/30 shadow-soft"
+                              : "border-[var(--accent)]/10 hover:border-[var(--accent)]/30 bg-white"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xl">{c.flag}</span>
+                            <span className="font-bold text-[var(--charcoal)]">{c.name}</span>
+                            {form.cities.includes(c.id) && (
+                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)] text-white">
+                                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                </svg>
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-3 flex flex-wrap gap-3 text-xs">
+                            <span className="text-[var(--muted)]">
+                              <span className="font-semibold text-[var(--accent)]"><CountUp end={stats.propertyCount} duration={1000} /></span> properties
+                            </span>
+                            {stats.portfolioValue > 0 && (
+                              <span className="text-[var(--muted)]">
+                                <span className="font-semibold text-[var(--accent)]"><CountUp end={portfolioM} duration={1200} decimals={1} prefix="$" suffix="M" /></span> portfolio
+                              </span>
+                            )}
+                            {stats.avgYield > 0 && (
+                              <span className="text-[var(--muted)]">
+                                <span className="font-semibold text-[var(--accent)]"><CountUp end={stats.avgYield} duration={1100} decimals={1} suffix="%" /></span> avg yield
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
                 <div>
